@@ -1,6 +1,6 @@
 <h1>ExpNo 5 : Implement Minimax Search Algorithm for a Simple TIC-TAC-TOE game</h1> 
-<h3>Name:           </h3>
-<h3>Register Number/Staff Id:          </h3>
+<h3>Name: Cynthia Mehul J</h3>
+<h3>Register Number: 212223240020</h3>
 <H3>Aim:</H3>
 <p>
     Implement Minimax Search Algorithm for a Simple TIC-TAC-TOE game
@@ -101,7 +101,41 @@ def minimax(game)
         return scores[min_score_index]
     end
 end
+<h3>PROGRAM:</h3>
+<pre>
+    <code>
+import math
 
+def minimax(curDepth, nodeIndex, maxTurn, scores, targetDepth, alpha, beta):
+    if curDepth == targetDepth:
+        return scores[nodeIndex]
+
+    if maxTurn:
+        maxEval = -math.inf
+        for i in range(2):
+            eval = minimax(curDepth + 1, nodeIndex * 2 + i, False, scores, targetDepth, alpha, beta)
+            maxEval = max(maxEval, eval)
+            alpha = max(alpha, eval)
+            if beta <= alpha:
+                break
+        return maxEval
+    else:
+        minEval = math.inf
+        for i in range(2):
+            eval = minimax(curDepth + 1, nodeIndex * 2 + i, True, scores, targetDepth, alpha, beta)
+            minEval = min(minEval, eval)
+            beta = min(beta, eval)
+            if beta <= alpha:
+                break
+        return minEval
+
+scores = [3, 5, 6, 9, 1, 2, 0, -1]
+targetDepth = 3
+
+best_value = minimax(0, 0, True, scores, targetDepth, -math.inf, math.inf)
+print("The optimal value is:", best_value)        
+    </code>
+</pre>
 <hr>
 <h2>Sample Input and Output</h2>
 
@@ -110,7 +144,9 @@ end
 ![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/dc06427a-d4ce-43a1-95bd-9acfaefac323)
 ![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/a8a27e2a-6fd4-46a2-afb5-6d27b8556702)
 ![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/a2acb6a1-ed8e-42e5-8968-fe805e4b0255)
-
+<br>
+<img width="257" height="31" alt="image" src="https://github.com/user-attachments/assets/e169359f-3670-4036-ac3c-01ec84b033a3" />
+<br>
 <hr>
 <h2>Result:</h2>
 <p>Thus,Implementation of  Minimax Search Algorithm for a Simple TIC-TAC-TOE game wasa done successfully.</p>
