@@ -104,48 +104,145 @@ end
 <h3>PROGRAM:</h3>
 <pre>
     <code>
-import math
+import time
 
-def minimax(curDepth, nodeIndex, maxTurn, scores, targetDepth, alpha, beta):
-    if curDepth == targetDepth:
-        return scores[nodeIndex]
+class TicTacToe:
+    def __init__(self):
+        self.initialize_game()
 
-    if maxTurn:
-        maxEval = -math.inf
-        for i in range(2):
-            eval = minimax(curDepth + 1, nodeIndex * 2 + i, False, scores, targetDepth, alpha, beta)
-            maxEval = max(maxEval, eval)
-            alpha = max(alpha, eval)
-            if beta <= alpha:
-                break
-        return maxEval
-    else:
-        minEval = math.inf
-        for i in range(2):
-            eval = minimax(curDepth + 1, nodeIndex * 2 + i, True, scores, targetDepth, alpha, beta)
-            minEval = min(minEval, eval)
-            beta = min(beta, eval)
-            if beta <= alpha:
-                break
-        return minEval
+    def initialize_game(self):
+        # 3x3 board
+        self.board = [['.' for _ in range(3)] for _ in range(3)]
+        self.player_turn = 'X'  # Human always plays first
 
-scores = [3, 5, 6, 9, 1, 2, 0, -1]
-targetDepth = 3
+    def draw_board(self):
+        for row in self.board:
+            print(" | ".join(row))
+        print()
 
-best_value = minimax(0, 0, True, scores, targetDepth, -math.inf, math.inf)
-print("The optimal value is:", best_value)        
+    def is_valid(self, x, y):
+        return 0 <= x < 3 and 0 <= y < 3 and self.board[x][y] == '.'
+
+    def is_end(self):
+        # Check rows and columns
+        for i in range(3):
+            if self.board[i][0] == self.board[i][1] == self.board[i][2] != '.':
+                return self.board[i][0]
+            if self.board[0][i] == self.board[1][i] == self.board[2][i] != '.':
+                return self.board[0][i]
+
+        # Check diagonals
+        if self.board[0][0] == self.board[1][1] == self.board[2][2] != '.':
+            return self.board[0][0]
+        if self.board[0][2] == self.board[1][1] == self.board[2][0] != '.':
+            return self.board[0][2]
+
+        # Check tie
+        for row in self.board:
+            if '.' in row:
+                return None  # Game not finished
+        return '.'  # Tie
+
+    # Minimax functions
+    def max(self):
+        maxv = -2
+        px = None
+        py = None
+        result = self.is_end()
+        if result == 'X': return (-1, 0, 0)
+        if result == 'O': return (1, 0, 0)
+        if result == '.': return (0, 0, 0)
+
+        for i in range(3):
+            for j in range(3):
+                if self.board[i][j] == '.':
+                    self.board[i][j] = 'O'
+                    (m, _, _) = self.min()
+                    if m > maxv:
+                        maxv = m
+                        px, py = i, j
+                    self.board[i][j] = '.'
+        return (maxv, px, py)
+
+    def min(self):
+        minv = 2
+        qx = None
+        qy = None
+        result = self.is_end()
+        if result == 'X': return (-1, 0, 0)
+        if result == 'O': return (1, 0, 0)
+        if result == '.': return (0, 0, 0)
+
+        for i in range(3):
+            for j in range(3):
+                if self.board[i][j] == '.':
+                    self.board[i][j] = 'X'
+                    (m, _, _) = self.max()
+                    if m < minv:
+                        minv = m
+                        qx, qy = i, j
+                    self.board[i][j] = '.'
+        return (minv, qx, qy)
+
+    def play(self):
+        while True:
+            self.draw_board()
+            result = self.is_end()
+
+            if result is not None:
+                if result == 'X':
+                    print("You win!")
+                elif result == 'O':
+                    print("AI wins!")
+                else:
+                    print("It's a tie!")
+                self.initialize_game()
+                return
+
+            if self.player_turn == 'X':
+                # Human turn
+                while True:
+                    try:
+                        px = int(input("Enter row (0-2): "))
+                        py = int(input("Enter col (0-2): "))
+                    except ValueError:
+                        print("Enter valid integers 0-2")
+                        continue
+
+                    if self.is_valid(px, py):
+                        self.board[px][py] = 'X'
+                        self.player_turn = 'O'
+                        break
+                    else:
+                        print("Invalid move, try again.")
+            else:
+                # AI turn
+                print("AI is making a move...")
+                start = time.time()
+                _, px, py = self.max()
+                end = time.time()
+                print(f"AI move: row={px}, col={py}, evaluation time: {round(end-start, 7)}s")
+                self.board[px][py] = 'O'
+                self.player_turn = 'X'
+
+def main():
+    game = TicTacToe()
+    game.play()
+
+if __name__ == "__main__":
+    main()
+        
     </code>
 </pre>
 <hr>
 <h2>Sample Input and Output</h2>
 
-![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/6b668685-8bcc-43c5-b5c2-ddd43f3da84a)
-![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/8ca1b08a-8312-4ef5-89df-e69b7b2c3fa2)
-![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/dc06427a-d4ce-43a1-95bd-9acfaefac323)
-![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/a8a27e2a-6fd4-46a2-afb5-6d27b8556702)
-![image](https://github.com/natsaravanan/19AI405FUNDAMENTALSOFARTIFICIALINTELLIGENCE/assets/87870499/a2acb6a1-ed8e-42e5-8968-fe805e4b0255)
-<br>
-<img width="257" height="31" alt="image" src="https://github.com/user-attachments/assets/e169359f-3670-4036-ac3c-01ec84b033a3" />
+<img width="591" height="347" alt="image" src="https://github.com/user-attachments/assets/c48c85e7-0ddf-4bfa-a96a-e50351391464" />
+
+<img width="567" height="522" alt="image" src="https://github.com/user-attachments/assets/11006064-1fb9-4b36-a814-100d9d8c4325" />
+
+<img width="493" height="294" alt="image" src="https://github.com/user-attachments/assets/a2f032d4-b4d6-4299-b8f4-460f7c0da326" />
+
 <br>
 <hr>
 <h2>Result:</h2>
